@@ -1,6 +1,17 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
+
 //Motor Pins
 int dirLeft1 = 5; // direction output pin for motor 1
 int dirLeft2 = 6; // direction output pin for motor 1
@@ -8,13 +19,12 @@ int dirLeft2 = 6; // direction output pin for motor 1
 int dirRight1 = 10;
 int dirRight2 = 9;
 
-int sensor2_pin = A2;
-int sensor1_pin = A1;
-
 const int max_value = 900;
 const int array_length = 120;
 
 typedef struct _sensor {
+  int pin;
+  
   int black_value;
   int grey_value;
   int white_value;
@@ -25,17 +35,23 @@ typedef struct _sensor {
   int arr[array_length];
 } Sensor;
 
-Sensor s1 = Sensor(0, 0, 0, 0, 0, {0});
-Sensor s2 = Sensor(0, 0, 0, 0, 0, {0});
-Sensor s3 = Sensor(0, 0, 0, 0, 0, {0});
+Sensor s1 = Sensor(A1, 0, 0, 0, 0, 0, {0});
+Sensor s2 = Sensor(A2, 0, 0, 0, 0, 0, {0});
+Sensor s3 = Sensor(A3, 0, 0, 0, 0, 0, {0});
 
-void find_max(){
+void initSensor(Sensor s) {
+  for (int i = 0; i < array_length; i++) {
+    s.arr[i] = 0;
+  }
+}
+
+void find_max(Sensor s){
     int localMax[array_length/2] = {0};
     int pointerToCurrentLocalMax = 0;
 
     //save all local maxima in localMax[]
     for (int i = 1; i < array_length; i++){
-        if (arr[i-1]< arr[i] && arr[i]>arr[i+1]){
+        if (s.arr[i-1]< s.arr[i] && s.arr[i]>s.arr[i+1]){
            localMax[pointerToCurrentLocalMax] = i;
            pointerToCurrentLocalMax ++;
         }
@@ -43,44 +59,37 @@ void find_max(){
 
     int max1 = 0, max2 = 0, max3 = 0;
     for (int i = 0; i < array_length/2; i++){
-        if (arr[localMax[i]] > arr[max1]){
+        if (s.arr[localMax[i]] > s.arr[max1]){
             max3 = max2;
             max2 = max1;
             max1 = localMax[i];
-        }else if (arr[localMax[i]] > arr[max2]){
+        }else if (s.arr[localMax[i]] > s.arr[max2]){
             max3 = max2;
             max2 = localMax[i];
-        }else if (arr[localMax[i]] > arr[max3]){
+        }else if (s.arr[localMax[i]] > s.arr[max3]){
             max3 = localMax[i];
         }
     }
 
-    black_value = std::min(max1, std::min(max2, max3));
-    white_value = std::max(max1, std::max(max2, max3));
-    grey_value = max1 + max2 + max3 - black_value - white_value;
+    s.black_value = min(max1, min(max2, max3));
+    s.white_value = max(max1, max(max2, max3));
+    s.grey_value = max1 + max2 + max3 - black_value - white_value;
 
     //compute thresholds
-    black_grey_thresh = (int) ((black_value + grey_value)/ 2);
-    white_grey_thresh = (int) ((white_value + grey_value)/ 2);
+    s.black_grey_thresh = (int) ((black_value + grey_value)/ 2);
+    s.white_grey_thresh = (int) ((white_value + grey_value)/ 2);
 }
 
-void addValueToBuckets(int value){
-    arr[value*array_length/max_value]++;
+void addValueToBucket(Sensor sensor, int value) {
+  sensor.arr[value*array_length/max_value]++;
 }
 
-int predict(int value) {
-    
-    if(num_prev_data == 1){
-        for (int i = 0; i < array_length; ++i)
-        {
-            arr[i] = 0;
-        }
-    }
-    addValueToBuckets(data[num_prev_data-1]);
-    find_max();
+int predict(Sensor s, int value) {
+    addValueToBuckets(s, value);
+    find_max(s);
     //output: 0 for black, 1 for gray and 2 for white.
-    if(value*array_length/max_value < black_grey_thresh)return 0;
-    if(value*array_length/max_value < white_grey_thresh)return 1;
+    if(value*array_length/max_value < s.black_grey_thresh)return 0;
+    if(value*array_length/max_value < s.white_grey_thresh)return 1;
     else return 2;
 }
 
@@ -122,11 +131,11 @@ void turn_right() {
 
 void setup() {
   initializeMotors();
-  // put your setup code here, to run once:
+  initSensor(s1);
+  initSensor(s2);
+  initSensor(s3);
   pinMode(sensor2_pin, INPUT);
   Serial.begin(9600);
-
-  
 }
 
 void loop() {
