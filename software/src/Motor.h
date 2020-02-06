@@ -18,8 +18,8 @@ public:
     void initPins() const {
         forwards.initPin();
         backwards.initPin();
-        forwards.setPwmFrequency(1);
-        backwards.setPwmFrequency(1);
+//        forwards.setPwmFrequency(1);
+//        backwards.setPwmFrequency(1);
     }
 
     void setNegativeOffset(int _offset) {

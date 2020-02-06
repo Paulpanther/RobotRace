@@ -7,11 +7,11 @@ Sensor::Sensor(int _pin): InputPin(_pin) {
 }
 
 void Sensor::calibrate() {
-    int localMax[BUCKETS_SIZE / 2] = {0};
+    int localMax[BUCKETS_COUNT / 2] = {0};
     int currentLocalMaxIndex = 0;
 
     //save all local maxima in localMax[]
-    for (int i = 1; i < BUCKETS_SIZE - 1; i++){
+    for (int i = 1; i < BUCKETS_COUNT - 1; i++){
         if (buckets[i-1] < buckets[i] && buckets[i] > buckets[i+1]){
             localMax[currentLocalMaxIndex] = i;
             currentLocalMaxIndex ++;
@@ -32,32 +32,45 @@ void Sensor::calibrate() {
         }
     }
 
-    black = min(max1, min(max2, max3));
-    white = max(max1, max(max2, max3));
+    white = min(max1, min(max2, max3));
+    black = max(max1, max(max2, max3));
     grey = max1 + max2 + max3 - black - white;
 
     //compute thresholds
     black_grey_thresh = (black + grey) / 2;
     white_grey_thresh = (white + grey) / 2;
+
 }
 
 Color Sensor::decode(int value) {
-    int bucketIndex = value * BUCKETS_SIZE / MAX_VALUE;
+    int bucketIndex = value * BUCKETS_COUNT / MAX_VALUE;
+    if (bucketIndex >= BUCKETS_COUNT || bucketIndex < 0)
+        return BLACK;
+
     buckets[bucketIndex]++;
 
     calibrate();
 
-    if (bucketIndex < black_grey_thresh)
-        return BLACK;
-    else if (bucketIndex < white_grey_thresh)
+//    Serial.print(black_grey_thresh);
+//    Serial.print(" ");
+//    Serial.print(white_grey_thresh);
+//    Serial.print(" ");
+//    Serial.print(bucketIndex);
+//    Serial.print(" ");
+
+    if (bucketIndex < white_grey_thresh)
+        return WHITE;
+    else if (bucketIndex < black_grey_thresh)
         return GREY;
     else
-        return WHITE;
+        return BLACK;
 }
 
 Color Sensor::read() {
     int raw = readRaw();
-    return decode(raw);
+    lastValues = lastValues * 0.99f + 0.01f * ((float) decode(raw));
+    return (Color) (int) lround((double) lastValues);
+//    return decode(raw);
 }
 
 void Sensor::reset() {

@@ -4,20 +4,22 @@
 
 #define DEBUG
 
-Sensor s1(A1);
-Sensor s2(A2);
-Sensor s3(A3);
+Sensor sensorFront(A0);
+Sensor sensorLeft(A2);
+Sensor sensorRight(A1);
 
 Driver drive(5, 6, 10, 9);
 
 void setup() {
-    Serial.begin(115200);
-    s1.initPin();
-    s2.initPin();
-    s3.initPin();
-    drive.initPins();
+//    sensorFront.initPin();
+//    sensorLeft.initPin();
+//    sensorRight.initPin();
+//    drive.initPins();
+    pinMode(A0, INPUT);
     drive.getMotorLeft().setNegativeOffset(1);
     drive.getMotorLeft().setNegativeOffset(25);
+
+    Serial.begin(115200);
 }
 
 boolean pointsToGoal(Color front, Color back) {
@@ -59,18 +61,20 @@ char buffer[20];
 
 void printSensorReadings(Color front, Color left, Color right) {
     String out = "%i %i %i";
-    sprintf(buffer, "%u %u %u", (int) front, (int) left, (int) right);
+    sprintf(buffer, "%u %u %u", front, left, right);
     Serial.println(buffer);
 }
 
 void loop() {
-    Color front = s1.read();
-    Color left = s2.read();
-    Color right = s3.read();
+    Color front = sensorFront.read();
+    Color left = sensorLeft.read();
+    Color right = sensorRight.read();
+
+//    Serial.println(front);
 
 #if defined(DEBUG)
     printSensorReadings(front, left, right);
 #endif
 
-    // move(front, left, right);
+//     move(front, left, right);
 }
