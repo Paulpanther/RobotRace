@@ -6,7 +6,7 @@
 #define DEFAULT_TIME_WAIT 3
 
 #define DEFAULT_SPEED_FORWARD 255
-#define DEFAULT_SPEED_TURN 170
+#define DEFAULT_SPEED_TURN 255
 
 class Driver {
 private:
@@ -28,11 +28,11 @@ public:
         right.initPins();
     }
 
-    Motor getMotorLeft() {
+    Motor & getMotorLeft() {
         return left;
     }
 
-    Motor getMotorRight() {
+    Motor & getMotorRight() {
         return right;
     }
 };

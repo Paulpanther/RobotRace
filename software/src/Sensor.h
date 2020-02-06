@@ -1,9 +1,13 @@
 #pragma once
 
 #include "InputPin.h"
+#include "kmeans.h"
+#include <Arduino.h>
 
 #define BUCKETS_COUNT 120
 #define MAX_VALUE 600
+
+#define MIN_BUCKET_DIST 5
 
 enum Color {
     WHITE,
@@ -17,9 +21,8 @@ private:
     int black_grey_thresh = 0;
     int white_grey_thresh = 0;
 
-    int buckets[BUCKETS_COUNT];
+    uint32_t buckets[BUCKETS_COUNT];
 
-//    History history;
     float lastValues = 1;
 
     void calibrate();

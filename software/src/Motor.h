@@ -26,6 +26,10 @@ public:
         offset = _offset;
     }
 
+    int getNegativeOffset() {
+        return offset;
+    }
+
     /**
      * @param speed Between 0 - 255
      */

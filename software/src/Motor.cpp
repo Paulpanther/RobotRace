@@ -6,8 +6,10 @@ void Motor::move(int speed) {
     int actualSpeed = abs(speed);
     boolean driveForwards = speed > 0;
 
-    if (actualSpeed > MOTOR_MIN)
+    if (actualSpeed > MOTOR_MIN) {
         actualSpeed -= offset;
+    }
+
 
     actualSpeed = max(0, min(actualSpeed, MOTOR_MAX));  // Clamp value between 0 and 255
 
