@@ -3,6 +3,7 @@
 #include "Driver.h"
 
 #define DEBUG
+// #define DRIVE_STRAIGHT
 
 Sensor sensorFront(A0);
 Sensor sensorLeft(A2);
@@ -15,7 +16,7 @@ void setup() {
     sensorLeft.initPin();
     sensorRight.initPin();
     drive.initPins();
-    drive.getMotorLeft().setNegativeOffset(30);
+    drive.getMotorLeft().setNegativeOffset(0);
     drive.getMotorRight().setNegativeOffset(0);
 
     Serial.begin(115200);
@@ -33,20 +34,16 @@ void move(Color front, Color left, Color right) {
     if (front != left && left != right && front != right) {
         // Ignore
         drive.forward();
-//        Serial.println("DIFF");
     } else if (front == left && left == right) {
         // All same
         drive.forward();
-//        Serial.println("SAME");
     } else if (left == right) {
         Color back = left;
         if (pointsToGoal(front, back)) {
             drive.forward();
-//            Serial.println("FORW");
         } else {
             // Turn 180
             drive.turnRight();
-//            Serial.println("BACK");
         }
     } else {
         boolean isLeftSame = front == left;
@@ -54,10 +51,8 @@ void move(Color front, Color left, Color right) {
 
         if (pointsToGoal(other, front)) {
             isLeftSame ? drive.turnRight() : drive.turnLeft();
-//            isLeftSame ? Serial.println("RIGH") : Serial.println("LEFT");
         } else {
             isLeftSame ? drive.turnLeft() : drive.turnRight();
-//            isLeftSame ? Serial.println("LEFT") : Serial.println("RIGH");
         }
     }
 }
@@ -79,5 +74,9 @@ void loop() {
     printSensorReadings(front, left, right);
 #endif
 
+#if defined(DRIVE_STRAIGHT)
+    drive.forward();
+#else
     move(front, left, right);
+#endif
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "InputPin.h"
-#include "kmeans.h"
 #include <Arduino.h>
 
 #define BUCKETS_COUNT 120

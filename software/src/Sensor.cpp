@@ -66,9 +66,25 @@ Color Sensor::decode(int value) {
 //    Serial.print(white_grey_thresh);
 //    Serial.print(" ");
 //    Serial.print(bucketIndex);
-//    Serial.print(" ");
 //    Serial.print(value);
 //    Serial.print(" ");
+//    if (pin == A0) {
+//        bucketIndex = value;
+//        white_grey_thresh = 300;
+//        black_grey_thresh = 360;
+//    }
+//
+//    if (pin == A2) {
+//        bucketIndex = value;
+//        white_grey_thresh = 300;
+//        black_grey_thresh = 380;
+//    }
+//
+//    if (pin == A1) {
+//        bucketIndex = value;
+//        white_grey_thresh = 300;
+//        black_grey_thresh = 370;
+//    }
 
     if (bucketIndex < white_grey_thresh)
         return WHITE;
