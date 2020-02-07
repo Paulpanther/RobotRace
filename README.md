@@ -1,6 +1,8 @@
 # RobotRacer
 Assignment for Building Interactive Devices at HPI
 
+![Robot](https://github.com/Paulpanther/RobotRace/blob/master/robot.jpg)
+
 ### Goal
 A projector shows [black, white and grey circles](http://xman.tw/radial.html) on the ground. Based on the light, the robot has to manouver to the center and be faster than the other robots
 
