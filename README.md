@@ -17,7 +17,7 @@ The drive logic works like this:
 ### How to build it
 1. Setup [platformio](https://platformio.org/)
 2. Clone this repo and compile the code in the `software/` directory
-3. Lasercut the `cuttingPlan.svg` in the hardware directory. 
+3. Lasercut the `cuttingPlan.svg` in the hardware directory (It's made with Adobe Illustrator. In other programs it might not be loading correctly). 
 Put some rubber bands around the frame so it holds together. 
 Put the motors through the holes and use screws to clamp them to the frame.
 Do the wiring like in `schematic.pdf` and stack everything together (Use some cardboard to attach the sensors).
