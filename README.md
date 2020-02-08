@@ -17,7 +17,11 @@ The drive logic works like this:
 ### How to build it
 1. Setup [platformio](https://platformio.org/)
 2. Clone this repo and compile the code in the `software/` directory
-3. Lasercut the `cuttingPlan.svg` in the hardware directory. Follow the Readme there to build the Robot
+3. Lasercut the `cuttingPlan.svg` in the hardware directory. 
+Put some rubber bands around the frame so it holds together. 
+Put the motors through the holes and use screws to clamp them to the frame.
+Do the wiring like in `schematic.pdf` and stack everything together (Use some cardboard to attach the sensors).
+You can put shrink tube on the motor axle to have more friction
 4. Plug the Robot in, upload the software.
 5. Try it out. You may need to move the robot a bit at the start, to let it see all the circles. The algorithm will give better results the long it is running.
 6. Debug it with the USB-cable attached. It will output what the Sensors see
